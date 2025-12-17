@@ -1,0 +1,26 @@
+﻿services:
+  finance-service-host:
+    container_name: finance-host
+    ports:
+      - "8001:8080"
+    depends_on:
+      finance-service-db:
+        condition: service_healthy
+        
+  finance-service-db:
+    image: postgres:latest
+    container_name: finance-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: "finance_service_db"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin1"
+      PGDATA: /data/postgres/
+    volumes:
+      - postgres_data:/data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookings_admin -d booking_service_bookings"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
