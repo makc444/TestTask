@@ -1,6 +1,6 @@
 ﻿namespace ApiGateway;
 
-public class User
+public class UserRequest
 {
     public int Id { get; set; }
     

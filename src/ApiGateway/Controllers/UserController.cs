@@ -12,12 +12,16 @@ public class UserController : ControllerBase
     {
         _logger = logger;
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> PostSignIn(string name,  string password)
+    public async Task<ActionResult<UserResponse>> PostSignIn(string name, string password)
     {
-        
-        
-        return Ok(name);
+        var a = new UserResponse
+        {
+            Name = name,
+            Password = password
+        };
+
+        return Ok(a);
     }
 }
