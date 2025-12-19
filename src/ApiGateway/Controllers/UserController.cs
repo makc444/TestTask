@@ -13,6 +13,11 @@ public class UserController : ControllerBase
         _logger = logger;
     }
     
-    [HttpGet("{}")]
-    
+    [HttpPost]
+    public async Task<IActionResult> PostSignIn(string name,  string password)
+    {
+        
+        
+        return Ok(name);
+    }
 }
