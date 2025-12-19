@@ -14,17 +14,30 @@ public class GetBookHandler
 
     public async Task<GetBookResponse> Find(long id)
     {
-        var result = await _context.Books.FindAsync(id);
-
-        if (result == null) throw new KeyNotFoundException(nameof(result));
-
-        var dto = new GetBookResponse()
+        try
         {
-            AuthorName = result.AuthorName,
-            Title = result.Title,
-            Id = result.Id
-        };
+            var result = await _context.Books.FindAsync(id);
 
-        return dto;
+            if (result == null) throw new KeyNotFoundException(nameof(result));
+
+            var dto = new GetBookResponse()
+            {
+                AuthorName = result.AuthorName,
+                Title = result.Title,
+                Id = result.Id
+            };
+
+            return dto;
+        }
+        catch (KeyNotFoundException e)
+        {
+            Console.WriteLine("Book not found");
+            throw;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

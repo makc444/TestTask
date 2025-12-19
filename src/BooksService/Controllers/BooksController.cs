@@ -14,23 +14,25 @@ public class BooksController : ControllerBase
     }
 
     [HttpDelete("/books/{id}")]
-    public async Task<ActionResult<GetBookResponse>> Delete([FromServices] GetBookHandler handler, long id)
+    public async Task<ActionResult> Delete([FromServices] DeleteBookHandler handler, long id)
     {
-        var result = await handler.Find(id);
+        await handler.Delete(id);
+        return Ok();
+    }
+
+    [HttpPost("/books/")]
+    public async Task<ActionResult<CreateBookResponse>> Create([FromServices] CreateBookHandler handler,
+        [FromBody] CreateBookRequest request)
+    {
+        var result = await handler.Create(request);
         return Ok(result);
     }
 
-    [HttpPost("/books/{id}")]
-    public async Task<ActionResult<GetBookResponse>> Create([FromServices] GetBookHandler handler, long id)
+    [HttpPut("/books/")]
+    public async Task<ActionResult<GetBookResponse>> Change([FromServices] PutBookHandler handler,
+        [FromBody] ChangeBookRequest request)
     {
-        var result = await handler.Find(id);
-        return Ok(result);
-    }
-
-    [HttpPut("/books/{id}")]
-    public async Task<ActionResult<GetBookResponse>> Change([FromServices] GetBookHandler handler, long id)
-    {
-        var result = await handler.Find(id);
+        var result = await handler.Change(request);
         return Ok(result);
     }
 }

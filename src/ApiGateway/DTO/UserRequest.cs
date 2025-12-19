@@ -1,4 +1,4 @@
-﻿namespace ApiGateway;
+﻿namespace ApiGateway.DTO;
 
 public class UserRequest
 {

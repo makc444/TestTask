@@ -7,7 +7,7 @@ public class BooksContext : DbContext
 {
     private readonly string _connectionString;
 
-    public DbSet<Book> Books;
+    public DbSet<Book> Books { get; set; }
 
     public BooksContext(DbContextOptions<BooksContext> options, IConfiguration configuration) : base(options)
     {

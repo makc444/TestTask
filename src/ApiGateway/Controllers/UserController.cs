@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiGateway.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApiGateway.Controllers;
 

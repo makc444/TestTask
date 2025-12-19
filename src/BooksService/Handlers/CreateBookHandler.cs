@@ -1,4 +1,5 @@
 ﻿using BooksService.Domain;
+using BooksService.DTO;
 
 namespace BooksService.Handlers;
 
@@ -11,16 +12,27 @@ public class CreateBookHandler
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task Create(long id, string authorName, string title, long userId)
+    public async Task<CreateBookResponse> Create(CreateBookRequest request)
     {
-        var a = new Book()
+        var bookEntity = new Book()
         {
-            Title = title,
-            AuthorName = authorName,
-            Id = id,
-            UserId = userId
+            Title = request.Title,
+            AuthorName = request.AuthorName,
+            UserId = request.UserId
         };
 
-        _context.Books.Add(a);
+        await _context.Books.AddAsync(bookEntity);
+
+        await _context.SaveChangesAsync();
+
+        var response = new CreateBookResponse()
+        {
+            Id = bookEntity.Id,
+            AuthorName = request.AuthorName,
+            Title = request.Title,
+            UserId = request.UserId
+        };
+
+        return response;
     }
 }
