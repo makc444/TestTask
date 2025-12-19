@@ -23,4 +23,16 @@ public class UserService : IUserService
         
         await _context.SaveChangesAsync();
     }
+
+    public Task GetUserAsync(string? name, string? password)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
+
+        var user = _context.Users
+            .AsNoTracking()
+            .SingleOrDefault(u => u.Name == name && u.Password == password);
+        
+        return Task.FromResult(user);
+    }
 }

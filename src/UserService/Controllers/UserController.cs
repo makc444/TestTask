@@ -28,8 +28,10 @@ public class UserController : ControllerBase
 
     [HttpPost]
 
-    public async Task<ActionResult<UserResponse>> PostSignIn(UserRequest request)
+    public async Task<ActionResult<UserResponse>> PostSignIn(UserRequestLogin request)
     {
+        await _userService.GetUserAsync(request.Name, request.Password);
+        
         return Ok();
     }
 }
