@@ -19,10 +19,17 @@ public class UserController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> PostSignIn(UserRequest request)
+    public async Task<ActionResult<UserResponse>> PostSignUp(UserRequest request)
     {
         await _userService.SaveUserAsync(request.Name, request.Password, request.Email);
 
         return Ok("Успех");
+    }
+
+    [HttpPost]
+
+    public async Task<ActionResult<UserResponse>> PostSignIn(UserRequest request)
+    {
+        return Ok();
     }
 }
