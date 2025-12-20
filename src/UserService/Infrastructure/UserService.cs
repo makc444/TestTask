@@ -19,7 +19,7 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         
-        var pass = BCrypt.Net.BCrypt.HashPassword(password);
+        var pass = BCrypt.Net.BCrypt.EnhancedHashPassword(password);
         
         await _context.Users.AddAsync(new User(){Email = email, Password = pass, Login = login});
         
@@ -31,7 +31,12 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-        User? userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
+        var userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
+
+        if (userDb == null)
+        {
+            throw new Exception("User not found");
+        }
         
         var isUserNotNull = BCrypt.Net.BCrypt.Verify(password, userDb.Password);
 
