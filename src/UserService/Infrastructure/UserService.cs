@@ -19,7 +19,9 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         
-        await _context.Users.AddAsync(new User(){Email = email, Password = password, Login = login});
+        var pass = BCrypt.Net.BCrypt.HashPassword(password);
+        
+        await _context.Users.AddAsync(new User(){Email = email, Password = pass, Login = login});
         
         await _context.SaveChangesAsync();
     }
@@ -29,9 +31,15 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-        var user = await _context.Users
-            .SingleOrDefaultAsync(u => u.Login == login && u.Password == password);
+        User? userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
         
-        return user;
+        var isUserNotNull = BCrypt.Net.BCrypt.Verify(password, userDb.Password);
+
+        if (isUserNotNull != true)
+        {
+            throw new Exception("Invalid login or password");
+        }
+        
+        return userDb;
     }
 }
