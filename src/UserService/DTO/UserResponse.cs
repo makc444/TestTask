@@ -1,4 +1,4 @@
-﻿namespace ApiGateway.DTO;
+﻿namespace UserService.DTO;
 
 public class UserResponse
 {

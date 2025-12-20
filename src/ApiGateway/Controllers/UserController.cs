@@ -12,3 +12,4 @@ public class UserController : ControllerBase
     {
         _logger = logger;
     }
+}

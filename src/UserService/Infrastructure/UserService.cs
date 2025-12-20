@@ -13,26 +13,25 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task SaveUserAsync(string? name, string? password, string? email)
+    public async Task SaveUserAsync(string? login, string? password, string? email)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         
-        await _context.Users.AddAsync(new User(){Email = email, Password = password, Name = name});
+        await _context.Users.AddAsync(new User(){Email = email, Password = password, Login = login});
         
         await _context.SaveChangesAsync();
     }
 
-    public Task GetUserAsync(string? name, string? password)
+    public async Task<User?> GetUserAsync(string? login, string? password)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-        var user = _context.Users
-            .AsNoTracking()
-            .SingleOrDefault(u => u.Name == name && u.Password == password);
+        var user = await _context.Users
+            .SingleOrDefaultAsync(u => u.Login == login && u.Password == password);
         
-        return Task.FromResult(user);
+        return user;
     }
 }

@@ -1,8 +1,10 @@
-﻿namespace UserService.Application;
+﻿using UserService.Models;
+
+namespace UserService.Application;
 
 public interface IUserService
 {
-    Task SaveUserAsync(string? name, string? password, string? email);
+    Task SaveUserAsync(string? login, string? password, string? email);
     
-    Task GetUserAsync(string? name, string? password);
+    Task<User?> GetUserAsync(string? login, string? password);
 }

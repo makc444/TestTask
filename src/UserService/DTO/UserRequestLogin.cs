@@ -1,8 +1,8 @@
-﻿namespace ApiGateway.DTO;
+﻿namespace UserService.DTO;
 
 public class UserRequestLogin
 {
-    public string? Name { get; set; }
+    public string? Login { get; set; } = String.Empty;
     
-    public string? Password { get; set; }
+    public string? Password { get; set; } = String.Empty;
 }

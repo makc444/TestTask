@@ -11,8 +11,8 @@ using UserService.Models;
 namespace UserService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20251219214326_AddCatalogRequestId2")]
-    partial class AddCatalogRequestId2
+    [Migration("20251220153533_Login_Name")]
+    partial class Login_Name
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,11 @@ namespace UserService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("text");
 
