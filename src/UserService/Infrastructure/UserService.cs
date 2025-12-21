@@ -40,34 +40,23 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
 
-        var userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
+        var userDb = await _context.Users
+            .Where(u => u.Login == login)
+            .Include(u => u.Roles)
+            .SingleOrDefaultAsync();
 
         if (userDb == null)
         {
             throw new Exception("User not found");
         }
 
-        if (BCrypt.Net.BCrypt.Verify(password, userDb.Password) is false)
+        if (BCrypt.Net.BCrypt.EnhancedVerify(password, userDb.Password) is false)
         {
             throw new Exception("Invalid login or password");
         }
         
         return userDb;
     }
-
-    /*public async Task<User?> GetUserAuthAsync(string? login,  string? password)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(login);
-        ArgumentException.ThrowIfNullOrWhiteSpace(password);
-        
-        var userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
-
-        if (userDb == null)
-        {
-            throw new Exception("User not found");
-        }
-                
-        return userDb;
-    }*/
+    
     
 }

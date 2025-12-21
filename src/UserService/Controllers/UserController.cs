@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UserService.Application;
 using UserService.DTO;
@@ -38,11 +42,24 @@ public class UserController : ControllerBase
     public async Task<ActionResult<UserResponseLogin>> PostSignIn(UserRequestLogin request)
     {
         var user = await _userService.GetUserAsync(request.Login, request.Password);
-
+        
         if (user == null)
         {
             return NotFound("Not found user");
         }
+
+        var cliams = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Login),
+            new Claim(ClaimTypes.Role, user.Roles.First().Type.ToString())
+        };
+          
+        var identity = new ClaimsIdentity(cliams, CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        var principal = new ClaimsPrincipal(identity);
+        
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal,
+        new AuthenticationProperties { IsPersistent = true });
 
         var response = new UserResponseLogin()
         {
@@ -52,14 +69,13 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    /*[HttpGet("testAuth")]
-    public async Task<ActionResult<UserTestResponse>> TestAuth(UserTestRequest request)
+    [HttpGet("Test")]
+    [Authorize]
+    public async Task<ActionResult<UserResponse>> GetTestCookie()
     {
-        if(string.IsNullOrEmpty(request.Login) || string.IsNullOrEmpty(request.Password))
-            return BadRequest("Invalid login or password");
         
-        var user = await _userService.GetUserAsync(request.Login, request.Password);
         
-        return Ok(new UserTestResponse() { Login = user.Login });
-    }*/
+        return Ok("Okey, Boss");
+    }
+    
 }

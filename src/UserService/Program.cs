@@ -9,11 +9,16 @@ using UserService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
         options => builder.Configuration.Bind("JwtSettings", options))
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-        options => builder.Configuration.Bind("CookieSettings", options));*/
+        options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            options.SlidingExpiration = true;
+            //options.AccessDeniedPath = "/Forbidden/";
+        });
 
 builder.Services.AddAuthorization();
 
