@@ -21,9 +21,16 @@ public class UserController : ControllerBase
     [HttpPost("SignUp")]
     public async Task<ActionResult<UserResponse>> PostSignUp(UserRequest request)
     {
-        await _userService.SaveUserAsync(request.Login, request.Password, request.Email);
+        var user = await _userService.SaveUserAsync(request.Login, request.Password, request.Email);
+        
+        var response = new UserResponse()
+        {
+            Login = user.Login,
+            
+            Role = user.Roles.Select(r=>r.Type).ToList(),
+        };
 
-        return Ok("Успех");
+        return Ok(response);
     }
 
     [HttpPost("SignIn")]
@@ -42,6 +49,6 @@ public class UserController : ControllerBase
             Login = user.Login,
         };
         
-        return response;
+        return Ok(response);
     }
 }
