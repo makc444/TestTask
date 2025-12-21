@@ -54,4 +54,20 @@ public class UserService : IUserService
         
         return userDb;
     }
+
+    /*public async Task<User?> GetUserAuthAsync(string? login,  string? password)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(login);
+        ArgumentException.ThrowIfNullOrWhiteSpace(password);
+        
+        var userDb = await _context.Users.Where(u => u.Login == login).SingleOrDefaultAsync();
+
+        if (userDb == null)
+        {
+            throw new Exception("User not found");
+        }
+                
+        return userDb;
+    }*/
+    
 }

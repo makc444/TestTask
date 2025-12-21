@@ -51,4 +51,15 @@ public class UserController : ControllerBase
         
         return Ok(response);
     }
+
+    /*[HttpGet("testAuth")]
+    public async Task<ActionResult<UserTestResponse>> TestAuth(UserTestRequest request)
+    {
+        if(string.IsNullOrEmpty(request.Login) || string.IsNullOrEmpty(request.Password))
+            return BadRequest("Invalid login or password");
+        
+        var user = await _userService.GetUserAsync(request.Login, request.Password);
+        
+        return Ok(new UserTestResponse() { Login = user.Login });
+    }*/
 }
