@@ -1,6 +1,6 @@
 ﻿namespace UserService.DTO;
 
-public class UserRequestLogin
+public class UserSignInRequest
 {
     public string? Login { get; set; } = String.Empty;
     

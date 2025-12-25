@@ -11,12 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-        options => builder.Configuration.Bind("JwtSettings", options))
+        options =>
+        {
+            options.Authority = builder.Configuration["Authority"];
+            options.Audience = builder.Configuration["Audience"];
+        })
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
         options =>
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             options.SlidingExpiration = true;
+            options.Cookie.SameSite = SameSiteMode.Lax;
             //options.AccessDeniedPath = "/Forbidden/";
         });
 

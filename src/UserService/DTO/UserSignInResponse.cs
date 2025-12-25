@@ -1,6 +1,6 @@
 ﻿namespace UserService.DTO;
 
-public class UserResponseLogin
+public class UserSignInResponse
 {
     public string? Login { get; set; } 
 }

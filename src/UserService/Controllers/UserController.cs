@@ -21,13 +21,13 @@ public class UserController : ControllerBase
         _logger = logger;
         _userService = userService;
     }
-    
+
     [HttpPost("SignUp")]
-    public async Task<ActionResult<UserResponse>> PostSignUp(UserRequest request)
+    public async Task<ActionResult<UserSignUpResponse>> PostSignUp(UserSignUpRequest signUpRequest)
     {
-        var user = await _userService.SaveUserAsync(request.Login, request.Password, request.Email);
+        var user = await _userService.SaveUserAsync(signUpRequest.Login, signUpRequest.Password, signUpRequest.Email);
         
-        var response = new UserResponse()
+        var response = new UserSignUpResponse()
         {
             Login = user.Login,
             
@@ -39,9 +39,9 @@ public class UserController : ControllerBase
 
     [HttpPost("SignIn")]
 
-    public async Task<ActionResult<UserResponseLogin>> PostSignIn(UserRequestLogin request)
+    public async Task<ActionResult<UserSignInResponse>> PostSignIn(UserSignInRequest signInRequest)
     {
-        var user = await _userService.GetUserAsync(request.Login, request.Password);
+        var user = await _userService.GetUserAsync(signInRequest.Login, signInRequest.Password);
         
         if (user == null)
         {
@@ -59,9 +59,9 @@ public class UserController : ControllerBase
         var principal = new ClaimsPrincipal(identity);
         
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal,
-        new AuthenticationProperties { IsPersistent = true });
+            new AuthenticationProperties { IsPersistent = true });
 
-        var response = new UserResponseLogin()
+        var response = new UserSignInResponse()
         {
             Login = user.Login,
         };
@@ -71,11 +71,10 @@ public class UserController : ControllerBase
 
     [HttpGet("Test")]
     [Authorize]
-    public async Task<ActionResult<UserResponse>> GetTestCookie()
+    public async Task<ActionResult<UserSignUpResponse>> GetTestCookie()
     {
         
         
         return Ok("Okey, Boss");
     }
-    
 }
