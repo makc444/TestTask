@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UserService.Application;
 using UserService.DTO;
@@ -17,31 +21,60 @@ public class UserController : ControllerBase
         _logger = logger;
         _userService = userService;
     }
-    
-    [HttpPost("SignUp")]
-    public async Task<ActionResult<UserResponse>> PostSignUp(UserRequest request)
-    {
-        await _userService.SaveUserAsync(request.Login, request.Password, request.Email);
 
-        return Ok("Успех");
+    [HttpPost("SignUp")]
+    public async Task<ActionResult<UserSignUpResponse>> PostSignUp(UserSignUpRequest signUpRequest)
+    {
+        var user = await _userService.SaveUserAsync(signUpRequest.Login, signUpRequest.Password, signUpRequest.Email);
+        
+        var response = new UserSignUpResponse()
+        {
+            Login = user.Login,
+            
+            Role = user.Roles.Select(r=>r.Type).ToList(),
+        };
+
+        return Ok(response);
     }
 
     [HttpPost("SignIn")]
 
-    public async Task<ActionResult<UserResponseLogin>> PostSignIn(UserRequestLogin request)
+    public async Task<ActionResult<UserSignInResponse>> PostSignIn(UserSignInRequest signInRequest)
     {
-        var user = await _userService.GetUserAsync(request.Login, request.Password);
-
+        var user = await _userService.GetUserAsync(signInRequest.Login, signInRequest.Password);
+        
         if (user == null)
         {
             return NotFound("Not found user");
         }
 
-        var response = new UserResponseLogin()
+        var cliams = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Login),
+            new Claim(ClaimTypes.Role, user.Roles.First().Type.ToString())
+        };
+          
+        var identity = new ClaimsIdentity(cliams, CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        var principal = new ClaimsPrincipal(identity);
+        
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal,
+            new AuthenticationProperties { IsPersistent = true });
+
+        var response = new UserSignInResponse()
         {
             Login = user.Login,
         };
         
-        return response;
+        return Ok(response);
+    }
+
+    [HttpGet("Test")]
+    [Authorize]
+    public async Task<ActionResult<UserSignUpResponse>> GetTestCookie()
+    {
+        
+        
+        return Ok("Okey, Boss");
     }
 }
