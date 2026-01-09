@@ -23,11 +23,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("SignUp")]
-    public async Task<ActionResult<UserSignUpResponse>> PostSignUp(UserSignUpRequest signUpRequest)
+    public async Task<ActionResult<SignUpResponse>> PostSignUp(SignUpRequest signUpRequest)
     {
         var user = await _userService.SaveUserAsync(signUpRequest.Login, signUpRequest.Password, signUpRequest.Email);
         
-        var response = new UserSignUpResponse()
+        var response = new SignUpResponse()
         {
             Login = user.Login,
             
@@ -39,7 +39,7 @@ public class UserController : ControllerBase
 
     [HttpPost("SignIn")]
 
-    public async Task<ActionResult<UserSignInResponse>> PostSignIn(UserSignInRequest signInRequest)
+    public async Task<ActionResult<SignInResponse>> PostSignIn(SignInRequest signInRequest)
     {
         var user = await _userService.GetUserAsync(signInRequest.Login, signInRequest.Password);
         
@@ -61,17 +61,17 @@ public class UserController : ControllerBase
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,principal,
             new AuthenticationProperties { IsPersistent = true });
 
-        var response = new UserSignInResponse()
+        var response = new SignInResponse()
         {
             Login = user.Login,
         };
         
-        return Ok(response);
+        return Results.Ok(token);
     }
 
     [HttpGet("Test")]
     [Authorize]
-    public async Task<ActionResult<UserSignUpResponse>> GetTestCookie()
+    public async Task<ActionResult<SignUpResponse>> GetTestCookie()
     {
         
         
