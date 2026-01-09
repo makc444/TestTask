@@ -39,6 +39,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>();
 
+builder.Services.AddScoped<IPasswordHasher, UserService.Infrastructure.PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService.Infrastructure.UserService>();
 
 

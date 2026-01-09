@@ -3,7 +3,7 @@ using UserService.Models;
 
 namespace UserService.DTO;
 
-public class UserSignUpResponse
+public class SignUpResponse
 {
     public string Login { get; set; } = String.Empty;
     
