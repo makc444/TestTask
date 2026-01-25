@@ -1,6 +1,7 @@
-﻿using UserService.Models;
+﻿namespace UserService.Application;
 
-namespace UserService.Application;
+using UserService.DTO;
+using UserService.Models;
 
 public interface IJwtProvider
 {

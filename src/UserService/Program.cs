@@ -1,33 +1,34 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using UserService.Application;
+using UserService.Infrastructure;
 using UserService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
         options =>
         {
-            options.Authority = builder.Configuration["Authority"];
-            options.Audience = builder.Configuration["Audience"];
-        })
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-        options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-            options.SlidingExpiration = true;
-            options.Cookie.SameSite = SameSiteMode.Lax;
-            //options.AccessDeniedPath = "/Forbidden/";
+            var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOptions.Issuer,
+                ValidAudience = jwtOptions.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+            };
         });
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -37,9 +38,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationContext>();
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IPasswordHasher, UserService.Infrastructure.PasswordHasher>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService.Infrastructure.UserService>();
 
 
@@ -60,6 +62,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+    context.Database.Migrate();
 }
 
 app.Run();

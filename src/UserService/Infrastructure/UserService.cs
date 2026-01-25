@@ -24,19 +24,50 @@ public class UserService : IUserService
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
 
+        if (!IsValidEmail(email))
+        {
+            throw new ArgumentException("Invalid email format", nameof(email));
+        }
+
+        bool userExist = await _context.Users
+            .AnyAsync(u => u.Login == login || u.Email == email);
+
+        if (userExist)
+        {
+            throw new InvalidOperationException("Email or Login already exists");
+        }
+
         var pass = _passwordHasher.Generate(password);
 
         var role = _context.Roles.SingleOrDefault(r => r.Type == RoleType.User)
                    ?? throw new InvalidOperationException("Role not found");
 
         var user = new User()
-            { Email = email, Password = pass, Login = login, Roles = { role } };
+        {
+            Email = email,
+            Password = pass,
+            Login = login,
+            Roles = { role },
+        };
 
         await _context.Users.AddAsync(user);
 
         await _context.SaveChangesAsync();
 
         return user;
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var mailAddress = new System.Net.Mail.MailAddress(email);
+            return mailAddress.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<User?> GetUserAsync(string? login, string? password)
@@ -58,11 +89,18 @@ public class UserService : IUserService
 
         if (endCrypt is false)
         {
-            throw new Exception("Invalid login or password");
+            throw new InvalidOperationException("Invalid login or password");
         }
-        
-        var token = _jwtProvider.GenerateToken();
-        
+
+        var token = _jwtProvider.GenerateToken(userDb);
+
         return userDb;
+    }
+
+
+    public async Task<string> GetTestStringProb()
+    {
+        // await Task.Delay(3000);
+        return "Hello";
     }
 }

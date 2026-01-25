@@ -6,7 +6,7 @@ namespace UserService.Models;
 public class ApplicationContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    
+
     public DbSet<Role> Roles { get; set; }
 
     private readonly string _connectionString;
@@ -25,7 +25,7 @@ public class ApplicationContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Role>().Property(x => x.Type).HasConversion<string>();
-        
+
         base.OnModelCreating(modelBuilder);
     }
 }
