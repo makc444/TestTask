@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.Options;
-using UserService.Domain;
-using UserService.Models;
-
-namespace UserService.DTO;
-
-public class SignUpResponse
+namespace UserService.DTO
 {
-    public string Login { get; set; } = String.Empty;
-    
-    public List<RoleType> Role { get; set; }
-    
+    using System.Collections.Generic;
+    using UserService.Domain;
+
+    public record SignUpResponse
+    {
+        public string Login { get; set; } = string.Empty;
+
+        public List<RoleType> Role { get; set; } = new ();
+    }
 }

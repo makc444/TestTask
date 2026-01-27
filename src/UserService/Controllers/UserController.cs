@@ -1,8 +1,5 @@
 ﻿namespace UserService.Controllers;
 
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -75,5 +72,4 @@ public class UserController : ControllerBase
         var test = _userService.GetTestStringProb();
         return Ok(test);
     }
-
 }

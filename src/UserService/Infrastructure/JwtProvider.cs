@@ -18,6 +18,7 @@ public class JwtProvider : IJwtProvider
         _options = options.Value;
     }
 
+    /// <inheritdoc/>
     public string GenerateToken(User user)
     {
         var claims = new List<Claim>

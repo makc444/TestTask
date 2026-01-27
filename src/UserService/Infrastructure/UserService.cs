@@ -18,6 +18,7 @@ public class UserService : IUserService
         _jwtProvider = jwtProvider;
     }
 
+    /// <inheritdoc/>
     public async Task<User> SaveUserAsync(string? login, string? password, string? email)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
@@ -70,6 +71,7 @@ public class UserService : IUserService
         }
     }
 
+    /// <inheritdoc/>
     public async Task<User?> GetUserAsync(string? login, string? password)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
@@ -98,6 +100,7 @@ public class UserService : IUserService
     }
 
 
+    /// <inheritdoc/>
     public async Task<string> GetTestStringProb()
     {
         // await Task.Delay(3000);

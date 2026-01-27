@@ -17,11 +17,13 @@ public class ApplicationContext : DbContext
                             ?? throw new InvalidOperationException("Connection string is not found");
     }
 
+    /// <inheritdoc/>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_connectionString);
     }
 
+    /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Role>().Property(x => x.Type).HasConversion<string>();
